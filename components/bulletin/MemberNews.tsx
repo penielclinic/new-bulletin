@@ -24,8 +24,8 @@ export default function MemberNews({ items }: Props) {
       <h2 className="section-title">교우소식</h2>
       <div className="space-y-2">
         {Object.entries(grouped).map(([type, list]) => (
-          <div key={type} className="rounded-lg px-4 py-2.5 text-xs" style={{ backgroundColor: "var(--cream)", border: "1px solid var(--gold-light)" }}>
-            <span className="font-bold mr-2" style={{ color: "var(--gold-text)" }}>
+          <div key={type} className="flex flex-wrap items-baseline gap-x-1 gap-y-0.5 rounded-lg px-4 py-2.5 text-xs" style={{ backgroundColor: "var(--cream)", border: "1px solid var(--gold-light)" }}>
+            <span className="font-bold shrink-0" style={{ color: "var(--gold-text)" }}>
               {TYPE_LABEL[type] ?? type}
             </span>
             {list.map((item, idx) => (
