@@ -8,7 +8,6 @@ import BulletinHeader from "@/components/bulletin/BulletinHeader";
 import WorshipOrder from "@/components/bulletin/WorshipOrder";
 import Announcements from "@/components/bulletin/Announcements";
 import WeeklyWord from "@/components/bulletin/WeeklyWord";
-import Schedule from "@/components/bulletin/Schedule";
 import WorshipCommittee from "@/components/bulletin/WorshipCommittee";
 import SchoolSermons from "@/components/bulletin/SchoolSermons";
 import MemberNews from "@/components/bulletin/MemberNews";
@@ -40,7 +39,7 @@ function HomeContent() {
   }
 
   const {
-    church, service, motto, worshipOrder, allWorshipOrders, announcements, weeklyWord, schedule,
+    church, service, motto, worshipOrder, allWorshipOrders, announcements, weeklyWord,
     worshipCommittee, schoolSermons, memberNews, fastingPrayer, missionWorshipReport,
     offeringDonors, meetings, autonomousGroups, offeringAccounts, staffMembers,
   } = data;
@@ -108,7 +107,6 @@ function HomeContent() {
               </div>
               <div className="space-y-7">
                 <Announcements items={announcements} />
-                <Schedule items={schedule} />
               </div>
             </div>
 
