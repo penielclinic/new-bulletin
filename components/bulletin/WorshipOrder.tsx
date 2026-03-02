@@ -33,10 +33,10 @@ export default function WorshipOrder({ items, serviceTypeName }: Props) {
               >
                 {item.title}
               </span>
-              <div className="leading-5 text-gray-600 min-w-0" style={{ fontSize: "0.75rem" }}>
+              <div className="leading-5 text-gray-600 min-w-0" style={{ fontSize: "0.75rem", wordBreak: "keep-all" }}>
                 {item.detail}
                 {item.note && (
-                  <span className="ml-1 text-gray-400">— {item.note}</span>
+                  <span className="ml-1 text-gray-400" style={{ wordBreak: "keep-all" }}>— {item.note}</span>
                 )}
               </div>
             </div>

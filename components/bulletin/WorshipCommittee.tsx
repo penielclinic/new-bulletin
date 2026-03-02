@@ -10,10 +10,14 @@ export default function WorshipCommittee({ items }: Props) {
   const 금주 = items.filter((r) => r.week_type === "금주");
   const 차주 = items.filter((r) => r.week_type === "차주");
 
-  const getMembers = (list: WorshipCommitteeItem[], role: string) => {
+  const getEntries = (list: WorshipCommitteeItem[], role: string) => {
     const matched = list.filter((r) => r.role_type === role);
     if (matched.length === 0) return null;
-    return matched.map((r) => (r.service_part ? `${r.service_part}: ${r.member_name}` : r.member_name)).join(" / ");
+    // 부가 있는 경우(사회, 기도인도): "1부: 이름 / 2부: 이름" 형태로 파트별 분리
+    return matched.map((r) => ({
+      prefix: r.service_part ? `${r.service_part}: ` : "",
+      names: r.member_name.split(/\s+/).filter(Boolean),
+    }));
   };
 
   const roles = ROLE_ORDER.filter(
@@ -30,11 +34,22 @@ export default function WorshipCommittee({ items }: Props) {
               {label}
             </div>
             {roles.map((role, idx) => {
-              const val = getMembers(data, role);
+              const entries = getEntries(data, role);
               return (
                 <div key={role} className="flex gap-2 px-3 py-1.5 text-xs" style={{ backgroundColor: idx % 2 === 0 ? "var(--cream)" : "white" }}>
                   <span className="shrink-0 font-semibold w-20" style={{ color: "var(--navy)" }}>{role}</span>
-                  <span className="text-gray-600 leading-4">{val ?? "—"}</span>
+                  <div className="text-gray-600 leading-5 min-w-0">
+                    {entries ? (
+                      entries.map((entry, ei) => (
+                        <div key={ei} className="flex flex-wrap gap-x-1">
+                          {entry.prefix && <span className="shrink-0 text-gray-500">{entry.prefix}</span>}
+                          {entry.names.map((name, ni) => (
+                            <span key={ni} className="whitespace-nowrap">{name}</span>
+                          ))}
+                        </div>
+                      ))
+                    ) : "—"}
+                  </div>
                 </div>
               );
             })}

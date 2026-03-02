@@ -29,7 +29,7 @@ export default function MemberNews({ items }: Props) {
               {TYPE_LABEL[type] ?? type}
             </span>
             {list.map((item, idx) => (
-              <span key={idx} className="text-gray-700">
+              <span key={idx} className="text-gray-700 whitespace-nowrap">
                 {idx > 0 && <span className="mx-1 text-gray-300">·</span>}
                 {item.member_name}
                 {item.detail && <span className="text-gray-400 ml-1">({item.detail})</span>}

@@ -25,8 +25,8 @@ export default function FastingPrayer({ items }: Props) {
             <div key={date} className="grid grid-cols-4 px-3 py-1.5 text-xs" style={{ backgroundColor: idx % 2 === 0 ? "var(--cream)" : "white" }}>
               <span className="text-gray-500">{label}</span>
               <span className="font-semibold" style={{ color: "var(--navy)" }}>{fasting?.day_of_week ?? intercession?.day_of_week}</span>
-              <span className="text-gray-700">{fasting ? `${fasting.member_name}` : "—"}</span>
-              <span className="text-gray-700">{intercession ? `${intercession.member_name}` : "—"}</span>
+              <span className="text-gray-700 whitespace-nowrap">{fasting ? fasting.member_name : "—"}</span>
+              <span className="text-gray-700 whitespace-nowrap">{intercession ? intercession.member_name : "—"}</span>
             </div>
           );
         })}

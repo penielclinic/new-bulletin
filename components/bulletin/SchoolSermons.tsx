@@ -14,7 +14,7 @@ export default function SchoolSermons({ items }: Props) {
             <span className="shrink-0 font-bold w-16" style={{ color: "var(--navy)" }}>{item.department}</span>
             <div className="flex-1">
               <p className="font-semibold text-gray-800">{item.sermon_title}</p>
-              <p className="text-gray-500 mt-0.5">{item.scripture} · {item.preacher}</p>
+              <p className="text-gray-500 mt-0.5" style={{ wordBreak: "keep-all" }}>{item.scripture} · {item.preacher}</p>
             </div>
           </div>
         ))}

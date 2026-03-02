@@ -17,7 +17,11 @@ export default function OfferingDonors({ items }: Props) {
             {offline.map((group, idx) => (
               <div key={idx} className="mb-1.5 rounded-lg px-4 py-2.5 text-xs" style={{ backgroundColor: "var(--cream)", border: "1px solid var(--gold-light)" }}>
                 <span className="font-bold mr-2" style={{ color: "var(--navy)" }}>{group.offering_type}</span>
-                <span className="text-gray-600 leading-5">{group.donor_names_raw}</span>
+                <span className="text-gray-600 leading-5 flex flex-wrap gap-x-1">
+                  {group.donor_names_raw.split(/\s+/).filter(Boolean).map((name, ni) => (
+                    <span key={ni} className="whitespace-nowrap">{name}</span>
+                  ))}
+                </span>
               </div>
             ))}
           </div>
@@ -28,7 +32,11 @@ export default function OfferingDonors({ items }: Props) {
             {online.map((group, idx) => (
               <div key={idx} className="mb-1.5 rounded-lg px-4 py-2.5 text-xs" style={{ backgroundColor: "white", border: "1px solid var(--gold-light)" }}>
                 <span className="font-bold mr-2" style={{ color: "var(--navy)" }}>{group.offering_type}</span>
-                <span className="text-gray-600 leading-5">{group.donor_names_raw}</span>
+                <span className="text-gray-600 leading-5 flex flex-wrap gap-x-1">
+                  {group.donor_names_raw.split(/\s+/).filter(Boolean).map((name, ni) => (
+                    <span key={ni} className="whitespace-nowrap">{name}</span>
+                  ))}
+                </span>
               </div>
             ))}
           </div>
