@@ -56,3 +56,7 @@ PDF 출력은 `lib/pdf.ts`에서 처리하며, 웹 뷰와 인쇄 뷰는 CSS `@me
 - **PDF 생성**: `react-pdf` 또는 `@react-pdf/renderer` 라이브러리 활용
 - **인쇄 스타일**: `@media print` CSS로 웹 뷰와 인쇄 뷰를 분리
 - **한글 폰트**: PDF 출력 시 한글 폰트를 `public/fonts/`에 포함하여 깨짐 방지
+- **한글 줄바꿈**: 이름·단어가 글자 중간에서 끊기지 않도록 반드시 아래 패턴을 사용한다
+  - 공백으로 구분된 이름/단어 목록은 `split(/\s+/)`으로 분리 후 각 항목을 `<span className="whitespace-nowrap">` 으로 감싸고 부모에 `flex flex-wrap gap-x-1` 적용
+  - 단일 이름/단어 셀(테이블·그리드)은 해당 요소에 `whitespace-nowrap` 적용
+  - 문장·제목·설명 텍스트는 `style={{ wordBreak: "keep-all" }}` 적용 (어절 중간 끊김 방지)
