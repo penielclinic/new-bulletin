@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BulletinData, SERVICE_TYPE_LABELS } from "@/types/bulletin";
 
 interface Props {
@@ -14,19 +15,26 @@ export default function BulletinHeader({ church, service, motto }: Props) {
         className="rounded-t-lg py-4 px-6 text-center print:rounded-none"
         style={{ backgroundColor: "var(--navy)" }}
       >
-        {/* 십자가 */}
-        <div className="text-2xl mb-1" style={{ color: "var(--gold-light)" }}>
-          ✝
+        <div className="flex items-center justify-center gap-4">
+          <Image
+            src="/logo.png"
+            alt="교회 로고"
+            width={56}
+            height={56}
+            className="object-contain"
+          />
+          <div className="text-left">
+            <h1
+              className="text-3xl font-black tracking-tight text-white print:text-2xl"
+              style={{ fontFamily: "var(--font-serif), serif" }}
+            >
+              {church.name}
+            </h1>
+            <p className="mt-1 text-xs tracking-widest" style={{ color: "var(--gold-light)" }}>
+              {church.pastor}
+            </p>
+          </div>
         </div>
-        <h1
-          className="text-3xl font-black tracking-tight text-white print:text-2xl"
-          style={{ fontFamily: "var(--font-serif), serif" }}
-        >
-          {church.name}
-        </h1>
-        <p className="mt-1 text-xs tracking-widest" style={{ color: "var(--gold-light)" }}>
-          {church.pastor}
-        </p>
       </div>
 
       {/* 금색 구분선 */}
