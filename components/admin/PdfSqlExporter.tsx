@@ -30,6 +30,23 @@ interface OfferingDonor {
   donor_names_raw: string;
 }
 
+interface MissionWorshipReport {
+  group_name: string;
+  total_members: number | null;
+  part1_count: number | null;
+  part2_count: number | null;
+  total_attendance: number | null;
+  notes: string | null;
+}
+
+interface FastingPrayer {
+  prayer_date: string;
+  day_of_week: string;
+  prayer_type: string;
+  order_number: number;
+  member_name: string;
+}
+
 interface ParsedData {
   bulletinDate: string;
   allWorshipOrders: { serviceType: string; items: WorshipItem[] }[];
@@ -39,6 +56,8 @@ interface ParsedData {
   schedule: { date_label: string; day_of_week: string; time: string; title: string; location: string | null }[];
   schoolSermons: SchoolSermon[];
   offeringDonors: OfferingDonor[];
+  missionWorshipReports: MissionWorshipReport[];
+  fastingPrayer: FastingPrayer[];
 }
 
 function escape(v: string | null | undefined): string {
@@ -110,9 +129,11 @@ function generateSql(d: ParsedData): string {
 
   // STEP 7: 교회 일정
   lines.push(`-- STEP 7: 교회 일정`, `DELETE FROM weekly_schedule WHERE bulletin_date = '${bd}';`);
-  const schedRows = (d.schedule ?? []).map((s, i) =>
-    `  ('${bd}', ${i + 1}, ${escape(s.date_label)}, ${escape(s.day_of_week)}, ${escape(s.time)}, ${escape(s.title)}, ${escape(s.location)})`
-  );
+  const schedRows = (d.schedule ?? []).filter((s) => s.title).map((s, i) => {
+    const dl = s.date_label || s.day_of_week || "매주";
+    const dow = s.day_of_week || dl;
+    return `  ('${bd}', ${i + 1}, ${escape(dl)}, ${escape(dow)}, ${escape(s.time)}, ${escape(s.title)}, ${escape(s.location)})`;
+  });
   if (schedRows.length > 0) {
     lines.push("INSERT INTO weekly_schedule (bulletin_date, sort_order, date_label, day_of_week, time, title, location) VALUES");
     lines.push(schedRows.join(",\n") + ";");
@@ -145,16 +166,44 @@ function generateSql(d: ParsedData): string {
   }
   lines.push("");
 
-  // STEP 10: 확인
+  // STEP 10: 선교회별 예배보고현황
+  lines.push(`-- STEP 10: 선교회별 예배보고현황`, `DELETE FROM mission_worship_report WHERE bulletin_date = '${bd}';`);
+  const missionRows = (d.missionWorshipReports ?? []).map((m) =>
+    `  ('${bd}', ${escape(m.group_name)}, ${m.total_members ?? "NULL"}, ${m.part1_count ?? "NULL"}, ${m.part2_count ?? "NULL"}, ${m.total_attendance ?? "NULL"}, ${escape(m.notes)})`
+  );
+  if (missionRows.length > 0) {
+    lines.push("INSERT INTO mission_worship_report (bulletin_date, group_name, total_members, part1_count, part2_count, total_attendance, notes) VALUES");
+    lines.push(missionRows.join(",\n") + ";");
+  } else {
+    lines.push("-- STEP 10: 선교회별 예배보고 데이터 없음");
+  }
+  lines.push("");
+
+  // STEP 11: 가정별 아침 금식 및 중보기도
+  lines.push(`-- STEP 11: 금식 및 중보기도`, `DELETE FROM fasting_prayer WHERE bulletin_date = '${bd}';`);
+  const prayerRows = (d.fastingPrayer ?? []).map((p) =>
+    `  ('${bd}', ${escape(p.prayer_date)}, ${escape(p.day_of_week)}, ${escape(p.prayer_type)}, ${p.order_number}, ${escape(p.member_name)})`
+  );
+  if (prayerRows.length > 0) {
+    lines.push("INSERT INTO fasting_prayer (bulletin_date, prayer_date, day_of_week, prayer_type, order_number, member_name) VALUES");
+    lines.push(prayerRows.join(",\n") + ";");
+  } else {
+    lines.push("-- STEP 11: 금식·중보기도 데이터 없음");
+  }
+  lines.push("");
+
+  // STEP 12: 확인
   lines.push(
-    "-- STEP 10: 확인 조회",
+    "-- STEP 12: 확인 조회",
     "SELECT worship_type, COUNT(*) as 항목수 FROM worship_orders GROUP BY worship_type;",
     `SELECT COUNT(*) as 예배위원수 FROM worship_committee WHERE bulletin_date = '${bd}';`,
     `SELECT COUNT(*) as 광고수 FROM announcements WHERE bulletin_date = '${bd}';`,
     `SELECT bulletin_date, reference FROM weekly_word WHERE bulletin_date = '${bd}';`,
     `SELECT COUNT(*) as 일정수 FROM weekly_schedule WHERE bulletin_date = '${bd}';`,
     `SELECT COUNT(*) as 교회학교수 FROM school_sermons WHERE bulletin_date = '${bd}';`,
-    `SELECT COUNT(*) as 헌금행수 FROM offering_donors_raw WHERE bulletin_date = '${bd}';`
+    `SELECT COUNT(*) as 헌금행수 FROM offering_donors_raw WHERE bulletin_date = '${bd}';`,
+    `SELECT COUNT(*) as 선교회보고수 FROM mission_worship_report WHERE bulletin_date = '${bd}';`,
+    `SELECT COUNT(*) as 기도순서수 FROM fasting_prayer WHERE bulletin_date = '${bd}';`
   );
 
   return lines.join("\n");
@@ -276,6 +325,8 @@ export default function PdfSqlExporter() {
           <p>· 이번 주 말씀: {parsed.weeklyWord?.reference ?? "없음"}</p>
           <p>· 교회학교 설교: {parsed.schoolSermons?.length ?? 0}개 부서</p>
           <p>· 헌금 드리신 분: {parsed.offeringDonors?.length ?? 0}개 항목</p>
+          <p>· 선교회별 예배보고: {parsed.missionWorshipReports?.length ?? 0}개 선교회</p>
+          <p>· 금식·중보기도: {parsed.fastingPrayer?.length ?? 0}개 순서</p>
         </div>
       )}
 

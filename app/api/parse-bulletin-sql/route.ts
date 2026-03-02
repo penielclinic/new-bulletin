@@ -18,6 +18,8 @@ Extract the following data:
 6. schedule: Weekly church schedule
 7. schoolSermons: Church school sermon info (교회학교 설교) for each department
 8. offeringDonors: All offering donor lists (헌금 드리신 분) — both offline and online
+9. missionWorshipReports: 선교회별 예배보고현황 (attendance report by mission group)
+10. fastingPrayer: 가정별 아침 금식 및 중보기도 schedule (fasting and intercessory prayer by family/person)
 
 Return this exact JSON structure:
 {
@@ -52,6 +54,13 @@ Return this exact JSON structure:
   ],
   "offeringDonors": [
     {"offering_type": "십일조", "is_online": false, "donor_names_raw": "이름1 이름2 이름3..."}
+  ],
+  "missionWorshipReports": [
+    {"group_name": "1선교회", "total_members": 30, "part1_count": 8, "part2_count": 22, "total_attendance": 30, "notes": null}
+  ],
+  "fastingPrayer": [
+    {"prayer_date": "YYYY-MM-DD", "day_of_week": "월", "prayer_type": "금식", "order_number": 43, "member_name": "박소영B"},
+    {"prayer_date": "YYYY-MM-DD", "day_of_week": "월", "prayer_type": "중보", "order_number": 44, "member_name": "한미영"}
   ]
 }
 
@@ -63,7 +72,9 @@ Important rules:
 - If a service type is not found in the bulletin, include it with empty items array
 - Extract ALL announcements, even if there are many
 - schoolSermons: extract ALL departments (유치부, 유초등부, 중고등부, 청년교회 etc.)
-- offeringDonors: extract ALL offering types. is_online=true for 온라인헌금 section, false for 현장헌금. Copy donor names exactly as written including parentheses. If no donors section found, return empty array`;
+- offeringDonors: extract ALL offering types. is_online=true for 온라인헌금 section, false for 현장헌금. Copy donor names exactly as written including parentheses. If no donors section found, return empty array
+- missionWorshipReports: extract the "선교회별 예배보고현황" table. group_name is the mission group name. Count numbers for total_members/part1_count/part2_count/total_attendance (null if not shown). If section not found, return empty array
+- fastingPrayer: extract the "가정별 아침 금식 및 중보기도" section. For each day row, create TWO entries — one with prayer_type="금식" and one with prayer_type="중보". prayer_date must be the actual calendar date in YYYY-MM-DD format (calculate from bulletin context and day of week). order_number is the rotation number (순). If section not found, return empty array`;
 
 function callAnthropic(apiKey: string, payload: object): Promise<string> {
   return new Promise((resolve, reject) => {

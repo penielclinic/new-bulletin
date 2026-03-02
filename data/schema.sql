@@ -322,3 +322,19 @@ INSERT INTO offering_donors_raw (bulletin_date, offering_type, is_online, donor_
 ('2026-03-01', '장학작정헌금', TRUE, '양두석(이선희) 이점순'),
 ('2026-03-01', '선교작정헌금', TRUE, '이점순'),
 ('2026-03-01', '어린이집건축헌금', TRUE, '이선희');
+
+
+-- ============================================================
+-- 12. 선교회별 예배보고현황 테이블 (mission_worship_report)
+-- ============================================================
+CREATE TABLE mission_worship_report (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  bulletin_date DATE NOT NULL,
+  group_name VARCHAR(50) NOT NULL,
+  total_members INTEGER,
+  part1_count INTEGER,
+  part2_count INTEGER,
+  total_attendance INTEGER,
+  notes VARCHAR(200),
+  created_at TIMESTAMP DEFAULT NOW()
+);
