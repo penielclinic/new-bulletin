@@ -115,6 +115,7 @@ export const bulletinData: BulletinData = {
   schoolSermons: [],
   memberNews: [],
   fastingPrayer: [],
+  missionWorshipReport: [],
   offeringDonors: [],
   meetings: [],
   autonomousGroups: [],

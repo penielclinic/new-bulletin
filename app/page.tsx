@@ -13,6 +13,7 @@ import WorshipCommittee from "@/components/bulletin/WorshipCommittee";
 import SchoolSermons from "@/components/bulletin/SchoolSermons";
 import MemberNews from "@/components/bulletin/MemberNews";
 import FastingPrayer from "@/components/bulletin/FastingPrayer";
+import MissionWorshipReport from "@/components/bulletin/MissionWorshipReport";
 import OfferingDonors from "@/components/bulletin/OfferingDonors";
 import Meetings from "@/components/bulletin/Meetings";
 import AutonomousGroups from "@/components/bulletin/AutonomousGroups";
@@ -40,7 +41,7 @@ function HomeContent() {
 
   const {
     church, service, motto, worshipOrder, allWorshipOrders, announcements, weeklyWord, schedule,
-    worshipCommittee, schoolSermons, memberNews, fastingPrayer,
+    worshipCommittee, schoolSermons, memberNews, fastingPrayer, missionWorshipReport,
     offeringDonors, meetings, autonomousGroups, offeringAccounts, staffMembers,
   } = data;
 
@@ -124,8 +125,9 @@ function HomeContent() {
               </div>
             )}
 
-            {/* 4단: 금식/중보기도 */}
+            {/* 4단: 금식/중보기도 + 선교회별 예배보고 */}
             {fastingPrayer.length > 0 && <FastingPrayer items={fastingPrayer} />}
+            {missionWorshipReport.length > 0 && <MissionWorshipReport items={missionWorshipReport} />}
 
             <Divider />
 

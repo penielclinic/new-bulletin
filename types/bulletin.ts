@@ -48,6 +48,15 @@ export interface FastingPrayerItem {
   member_name: string;
 }
 
+export interface MissionWorshipReportItem {
+  group_name: string;
+  total_members: number | null;
+  part1_count: number | null;
+  part2_count: number | null;
+  total_attendance: number | null;
+  notes: string | null;
+}
+
 export interface OfferingDonorGroup {
   offering_type: string;
   is_online: boolean;
@@ -134,6 +143,7 @@ export interface BulletinData {
   schoolSermons: SchoolSermon[];
   memberNews: MemberNewsItem[];
   fastingPrayer: FastingPrayerItem[];
+  missionWorshipReport: MissionWorshipReportItem[];
   offeringDonors: OfferingDonorGroup[];
   meetings: MeetingItem[];
   autonomousGroups: AutonomousGroup[];

@@ -27,7 +27,7 @@ export async function GET(request: Request) {
       worshipRes, announcementsRes, churchRes, mottoRes,
       weeklyWordRes, scheduleRes, committeeRes, schoolRes,
       memberNewsRes, fastingRes, offeringDonorsRes,
-      meetingsRes, groupsRes, accountsRes, staffRes,
+      meetingsRes, groupsRes, accountsRes, staffRes, missionRes,
       ...allWorshipResults
     ] = await Promise.all([
       supabase.from("worship_orders").select("*").eq("worship_type", serviceType).order("order_number"),
@@ -45,6 +45,7 @@ export async function GET(request: Request) {
       supabase.from("autonomous_groups").select("*").order("id"),
       supabase.from("offering_accounts").select("*").order("id"),
       supabase.from("staff_members").select("*").order("role_category").order("sort_order"),
+      supabase.from("mission_worship_report").select("*").eq("bulletin_date", bulletinDate).order("id"),
       ...SERVICE_TYPES.map((t) =>
         supabase.from("worship_orders").select("*").eq("worship_type", t).order("order_number")
       ),
@@ -138,6 +139,14 @@ export async function GET(request: Request) {
         prayer_type: r.prayer_type,
         order_number: r.order_number,
         member_name: r.member_name,
+      })),
+      missionWorshipReport: (missionRes.data ?? []).map((r) => ({
+        group_name: r.group_name,
+        total_members: r.total_members,
+        part1_count: r.part1_count,
+        part2_count: r.part2_count,
+        total_attendance: r.total_attendance,
+        notes: r.notes,
       })),
       offeringDonors: (offeringDonorsRes.data ?? []).map((r) => ({
         offering_type: r.offering_type,
