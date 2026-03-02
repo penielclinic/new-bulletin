@@ -17,6 +17,19 @@ interface CommitteeItem {
   member_name: string;
 }
 
+interface SchoolSermon {
+  department: string;
+  preacher: string;
+  scripture: string | null;
+  sermon_title: string | null;
+}
+
+interface OfferingDonor {
+  offering_type: string;
+  is_online: boolean;
+  donor_names_raw: string;
+}
+
 interface ParsedData {
   bulletinDate: string;
   allWorshipOrders: { serviceType: string; items: WorshipItem[] }[];
@@ -24,6 +37,8 @@ interface ParsedData {
   announcements: { order: number; title: string; content: string }[];
   weeklyWord: { verse: string; reference: string; content: string };
   schedule: { date_label: string; day_of_week: string; time: string; title: string; location: string | null }[];
+  schoolSermons: SchoolSermon[];
+  offeringDonors: OfferingDonor[];
 }
 
 function escape(v: string | null | undefined): string {
@@ -104,14 +119,42 @@ function generateSql(d: ParsedData): string {
   }
   lines.push("");
 
-  // STEP 8: 확인
+  // STEP 8: 교회학교 설교
+  lines.push(`-- STEP 8: 교회학교 설교`, `DELETE FROM school_sermons WHERE bulletin_date = '${bd}';`);
+  const schoolRows = (d.schoolSermons ?? []).map((s) =>
+    `  ('${bd}', ${escape(s.department)}, ${escape(s.preacher ?? "")}, ${escape(s.scripture)}, ${escape(s.sermon_title)})`
+  );
+  if (schoolRows.length > 0) {
+    lines.push("INSERT INTO school_sermons (bulletin_date, department, preacher, scripture, sermon_title) VALUES");
+    lines.push(schoolRows.join(",\n") + ";");
+  } else {
+    lines.push("-- STEP 8: 교회학교 데이터 없음");
+  }
+  lines.push("");
+
+  // STEP 9: 헌금 드리신 분
+  lines.push(`-- STEP 9: 헌금 드리신 분`, `DELETE FROM offering_donors_raw WHERE bulletin_date = '${bd}';`);
+  const offeringRows = (d.offeringDonors ?? []).map((o) =>
+    `  ('${bd}', ${escape(o.offering_type)}, ${o.is_online ? "TRUE" : "FALSE"}, ${escape(o.donor_names_raw)})`
+  );
+  if (offeringRows.length > 0) {
+    lines.push("INSERT INTO offering_donors_raw (bulletin_date, offering_type, is_online, donor_names_raw) VALUES");
+    lines.push(offeringRows.join(",\n") + ";");
+  } else {
+    lines.push("-- STEP 9: 헌금 데이터 없음");
+  }
+  lines.push("");
+
+  // STEP 10: 확인
   lines.push(
-    "-- STEP 8: 확인 조회",
+    "-- STEP 10: 확인 조회",
     "SELECT worship_type, COUNT(*) as 항목수 FROM worship_orders GROUP BY worship_type;",
     `SELECT COUNT(*) as 예배위원수 FROM worship_committee WHERE bulletin_date = '${bd}';`,
     `SELECT COUNT(*) as 광고수 FROM announcements WHERE bulletin_date = '${bd}';`,
     `SELECT bulletin_date, reference FROM weekly_word WHERE bulletin_date = '${bd}';`,
-    `SELECT COUNT(*) as 일정수 FROM weekly_schedule WHERE bulletin_date = '${bd}';`
+    `SELECT COUNT(*) as 일정수 FROM weekly_schedule WHERE bulletin_date = '${bd}';`,
+    `SELECT COUNT(*) as 교회학교수 FROM school_sermons WHERE bulletin_date = '${bd}';`,
+    `SELECT COUNT(*) as 헌금행수 FROM offering_donors_raw WHERE bulletin_date = '${bd}';`
   );
 
   return lines.join("\n");
@@ -231,6 +274,8 @@ export default function PdfSqlExporter() {
           <p>· 광고: {parsed.announcements?.length ?? 0}개</p>
           <p>· 교회 일정: {parsed.schedule?.length ?? 0}개</p>
           <p>· 이번 주 말씀: {parsed.weeklyWord?.reference ?? "없음"}</p>
+          <p>· 교회학교 설교: {parsed.schoolSermons?.length ?? 0}개 부서</p>
+          <p>· 헌금 드리신 분: {parsed.offeringDonors?.length ?? 0}개 항목</p>
         </div>
       )}
 

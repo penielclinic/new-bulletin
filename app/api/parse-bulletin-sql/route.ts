@@ -16,6 +16,8 @@ Extract the following data:
 4. announcements: Church announcements with title and content
 5. weeklyWord: The weekly scripture passage
 6. schedule: Weekly church schedule
+7. schoolSermons: Church school sermon info (교회학교 설교) for each department
+8. offeringDonors: All offering donor lists (헌금 드리신 분) — both offline and online
 
 Return this exact JSON structure:
 {
@@ -44,6 +46,12 @@ Return this exact JSON structure:
   },
   "schedule": [
     {"date_label": "1월 25일", "day_of_week": "주일", "time": "09:00", "title": "행사명", "location": "장소 또는 null"}
+  ],
+  "schoolSermons": [
+    {"department": "유치부", "preacher": "홍길동 목사", "scripture": "마4:23", "sermon_title": "설교 제목"}
+  ],
+  "offeringDonors": [
+    {"offering_type": "십일조", "is_online": false, "donor_names_raw": "이름1 이름2 이름3..."}
   ]
 }
 
@@ -53,7 +61,9 @@ Important rules:
 - service_part should be "1부", "2부", or null
 - member_name: list all names separated by spaces
 - If a service type is not found in the bulletin, include it with empty items array
-- Extract ALL announcements, even if there are many`;
+- Extract ALL announcements, even if there are many
+- schoolSermons: extract ALL departments (유치부, 유초등부, 중고등부, 청년교회 etc.)
+- offeringDonors: extract ALL offering types. is_online=true for 온라인헌금 section, false for 현장헌금. Copy donor names exactly as written including parentheses. If no donors section found, return empty array`;
 
 function callAnthropic(apiKey: string, payload: object): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -107,7 +117,7 @@ export async function POST(request: Request) {
 
     const payload = {
       model: "claude-opus-4-6",
-      max_tokens: 8192,
+      max_tokens: 16000,
       system: SYSTEM_PROMPT,
       messages: [
         {
