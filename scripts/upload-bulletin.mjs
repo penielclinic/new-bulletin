@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-const PDF_PATH = "C:/Users/penie/Desktop/주보/n_2025년 12월 28일(최종).pdf";
+const PDF_PATH = "C:/Users/penie/Desktop/주보/n_2026년 3월 1일(최종).pdf";
 const API_URL = "http://localhost:3000/api/parse-bulletin-sql";
 const SUPABASE_URL = "https://mjekoveqvrclfaebhuty.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qZWtvdmVxdnJjbGZhZWJodXR5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjA4Mzg3OSwiZXhwIjoyMDg3NjU5ODc5fQ.PHj2WTKwxyZXnU31Rnii2PFW-ZZCieRfGbHVgQXFtQ0";

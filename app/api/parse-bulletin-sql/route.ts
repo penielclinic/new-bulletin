@@ -74,6 +74,7 @@ Important rules:
 - standing: true if the item has a ▲ triangle symbol (일어서서 예배) next to it, false otherwise
 - If a service type is not found in the bulletin, include it with empty items array
 - Extract ALL announcements, even if there are many
+- allWorshipOrders: extract EVERY item in each service's worship order without exception, including items at the end such as 다음주 기도, 광고, 축도, 후주 etc.
 - schoolSermons: extract ALL departments (유치부, 유초등부, 중고등부, 청년교회 etc.)
 - offeringDonors: extract ALL offering types. is_online=true for 온라인헌금 section, false for 현장헌금. Copy donor names exactly as written including parentheses. If no donors section found, return empty array
 - missionWorshipReports: extract the "선교회별 예배보고현황" table. CRITICAL: create ONE ROW PER 순 (rotation group), NOT one row per 선교회 (mission group). group_name format must be "N선교회 M순" where M is the EXACT 순 number as printed in the bulletin (순 numbers are continuous across all 선교회 and do NOT restart at 1 for each 선교회 — e.g., if 1선교회 has 순 1~4 and 2선교회 starts at 순 5, use "2선교회 5순" not "2선교회 1순"). Set total_members/part1_count/part2_count to null. total_attendance = the 인원 (attendance count) number shown for that 순 row (null if not shown). notes format: "순장: 이름, 장소: 장소명, 인도: 이름, 성경: 번호" (include all fields present; omit fields not shown). If section not found, return empty array
