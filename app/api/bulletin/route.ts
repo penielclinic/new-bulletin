@@ -22,6 +22,7 @@ export async function GET(request: Request) {
     }
 
     const serviceType = (searchParams.get("serviceType") ?? "주일대예배") as (typeof SERVICE_TYPES)[number];
+    const bulletinYear = new Date(bulletinDate).getFullYear();
 
     const [
       worshipRes, announcementsRes, churchRes, mottoRes,
@@ -33,7 +34,7 @@ export async function GET(request: Request) {
       supabase.from("worship_orders").select("*").eq("bulletin_date", bulletinDate).eq("worship_type", serviceType).order("order_number"),
       supabase.from("announcements").select("*").eq("bulletin_date", bulletinDate).order("order_number"),
       supabase.from("church_info").select("*").eq("id", 1).single(),
-      supabase.from("motto").select("*").order("year", { ascending: false }).limit(1).single(),
+      supabase.from("motto").select("*").eq("year", bulletinYear).single(),
       supabase.from("weekly_word").select("*").eq("bulletin_date", bulletinDate).single(),
       supabase.from("weekly_schedule").select("*").eq("bulletin_date", bulletinDate).order("sort_order"),
       supabase.from("worship_committee").select("*").eq("bulletin_date", bulletinDate).order("week_type").order("id"),
