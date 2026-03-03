@@ -30,7 +30,7 @@ export async function GET(request: Request) {
       meetingsRes, groupsRes, accountsRes, staffRes, missionRes,
       ...allWorshipResults
     ] = await Promise.all([
-      supabase.from("worship_orders").select("*").eq("worship_type", serviceType).order("order_number"),
+      supabase.from("worship_orders").select("*").eq("bulletin_date", bulletinDate).eq("worship_type", serviceType).order("order_number"),
       supabase.from("announcements").select("*").eq("bulletin_date", bulletinDate).order("order_number"),
       supabase.from("church_info").select("*").eq("id", 1).single(),
       supabase.from("motto").select("*").order("year", { ascending: false }).limit(1).single(),
@@ -47,7 +47,7 @@ export async function GET(request: Request) {
       supabase.from("staff_members").select("*").order("role_category").order("sort_order"),
       supabase.from("mission_worship_report").select("*").eq("bulletin_date", bulletinDate).order("id"),
       ...SERVICE_TYPES.map((t) =>
-        supabase.from("worship_orders").select("*").eq("worship_type", t).order("order_number")
+        supabase.from("worship_orders").select("*").eq("bulletin_date", bulletinDate).eq("worship_type", t).order("order_number")
       ),
     ]);
 
