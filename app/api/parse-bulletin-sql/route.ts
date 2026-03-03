@@ -28,7 +28,7 @@ Return this exact JSON structure:
     {
       "serviceType": "주일대예배",
       "items": [
-        {"order": 1, "title": "순서명", "detail": "내용 또는 null", "note": "인도자 또는 null"}
+        {"order": 1, "title": "순서명", "detail": "내용 또는 null", "note": "인도자 또는 null", "standing": false}
       ]
     },
     {"serviceType": "주일오후예배", "items": [...]},
@@ -69,6 +69,7 @@ Important rules:
 - For worshipCommittee role_type use exactly: 예배위원(선교회), 사회, 기도인도, 헌금위원, 정문, 3층, 실내, 중층, 중식
 - service_part should be "1부", "2부", or null
 - member_name: list all names separated by spaces
+- standing: true if the item has a ▲ triangle symbol (일어서서 예배) next to it, false otherwise
 - If a service type is not found in the bulletin, include it with empty items array
 - Extract ALL announcements, even if there are many
 - schoolSermons: extract ALL departments (유치부, 유초등부, 중고등부, 청년교회 etc.)

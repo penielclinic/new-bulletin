@@ -3,6 +3,7 @@ export interface WorshipItem {
   title: string;
   detail?: string;
   note?: string;
+  standing?: boolean;
 }
 
 export interface Announcement {

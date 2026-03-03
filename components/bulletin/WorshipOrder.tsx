@@ -27,6 +27,9 @@ export default function WorshipOrder({ items, serviceTypeName }: Props) {
               >
                 {item.order}
               </span>
+              <span className="shrink-0 w-3 text-center pt-px" style={{ color: "var(--navy)", fontSize: "0.6rem" }}>
+                {item.standing ? "▲" : ""}
+              </span>
               <span
                 className="w-20 font-semibold shrink-0 leading-5"
                 style={{ color: "var(--navy)", fontFamily: "var(--font-serif), serif", fontSize: "0.75rem", letterSpacing: "0.05em" }}

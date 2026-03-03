@@ -53,11 +53,12 @@ export async function GET(request: Request) {
 
     const allWorshipOrders = SERVICE_TYPES.map((t, i) => ({
       serviceType: t,
-      items: (allWorshipResults[i]?.data ?? []).map((r: { order_number: number; order_name: string; detail?: string; leader?: string }) => ({
+      items: (allWorshipResults[i]?.data ?? []).map((r: { order_number: number; order_name: string; detail?: string; leader?: string; standing?: boolean }) => ({
         order: r.order_number,
         title: r.order_name,
         detail: r.detail ?? undefined,
         note: r.leader ?? undefined,
+        standing: r.standing ?? false,
       })),
     }));
 
@@ -97,6 +98,7 @@ export async function GET(request: Request) {
         title: r.order_name,
         detail: r.detail ?? undefined,
         note: r.leader ?? undefined,
+        standing: r.standing ?? false,
       })),
       announcements: (announcementsRes.data ?? []).map((r, idx) => ({
         id: idx + 1,
