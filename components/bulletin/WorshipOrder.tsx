@@ -45,6 +45,11 @@ export default function WorshipOrder({ items, serviceTypeName }: Props) {
             </div>
           ))
         )}
+        {items.some((i) => i.standing) && (
+          <p className="px-3 py-1.5 text-gray-400" style={{ fontSize: "0.65rem", borderTop: "1px solid var(--gold-light)" }}>
+            ▲ 표시는 일어서서 예배를 드립니다.
+          </p>
+        )}
       </div>
     </section>
   );
