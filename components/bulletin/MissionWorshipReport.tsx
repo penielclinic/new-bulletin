@@ -47,10 +47,10 @@ export default function MissionWorshipReport({ items }: Props) {
                   <tr className="text-white" style={{ backgroundColor: "var(--navy)" }}>
                     <th className="px-2 py-1.5 text-left font-semibold whitespace-nowrap">순</th>
                     <th className="px-2 py-1.5 text-left font-semibold whitespace-nowrap">순장</th>
-                    <th className="px-2 py-1.5 text-center font-semibold whitespace-nowrap">출석</th>
                     <th className="px-2 py-1.5 text-left font-semibold whitespace-nowrap">장소</th>
                     <th className="px-2 py-1.5 text-left font-semibold whitespace-nowrap">인도</th>
-                    <th className="px-2 py-1.5 text-left font-semibold whitespace-nowrap">성경/찬송</th>
+                    <th className="px-2 py-1.5 text-center font-semibold whitespace-nowrap">인원</th>
+                    <th className="px-2 py-1.5 text-left font-semibold whitespace-nowrap">성경</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -66,6 +66,12 @@ export default function MissionWorshipReport({ items }: Props) {
                         <td className="px-2 py-1.5 font-medium text-gray-800 whitespace-nowrap">
                           {n["순장"] ?? "—"}
                         </td>
+                        <td className="px-2 py-1.5 text-gray-600 whitespace-nowrap">
+                          {n["장소"] ?? "—"}
+                        </td>
+                        <td className="px-2 py-1.5 text-gray-600 whitespace-nowrap">
+                          {n["인도"] ?? "—"}
+                        </td>
                         <td
                           className="px-2 py-1.5 text-center font-bold whitespace-nowrap"
                           style={{ color: "var(--navy)" }}
@@ -73,13 +79,7 @@ export default function MissionWorshipReport({ items }: Props) {
                           {item.total_attendance ?? "—"}
                         </td>
                         <td className="px-2 py-1.5 text-gray-600 whitespace-nowrap">
-                          {n["장소"] ?? "—"}
-                        </td>
-                        <td className="px-2 py-1.5 text-gray-600 whitespace-nowrap">
-                          {n["인도"] ?? "—"}
-                        </td>
-                        <td className="px-2 py-1.5 text-gray-600 whitespace-nowrap">
-                          {n["성경"] ?? "—"}
+                          {n["성경"] && n["성경"] !== "0" ? n["성경"] : "—"}
                         </td>
                       </tr>
                     );
