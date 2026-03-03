@@ -47,25 +47,25 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-paper">
       {/* 상단 바 */}
-      <div className="no-print sticky top-0 z-10 flex justify-between items-center bg-white/80 backdrop-blur px-3 sm:px-6 py-2 shadow-sm border-b border-amber-100 min-h-[52px]">
-        <div className="flex items-center gap-2">
+      <div className="no-print sticky top-0 z-10 flex justify-between items-center bg-white/95 backdrop-blur-sm px-3 sm:px-5 py-2.5 border-b min-h-[52px]" style={{ borderColor: "var(--gold-light)", boxShadow: "0 1px 8px rgba(27,50,82,0.06)" }}>
+        <div className="flex items-center gap-1.5">
           <Link
             href="/admin"
-            className="rounded border px-4 py-2.5 text-xs font-semibold transition-colors"
-            style={{ borderColor: "var(--navy)", color: "var(--navy)" }}
+            className="flex items-center gap-1 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all hover:shadow-sm"
+            style={{ background: "var(--cream)", color: "var(--navy)", border: "1px solid var(--gold-light)" }}
           >
-            <span aria-hidden="true">⚙</span> 관리자
+            <span aria-hidden="true" style={{ fontSize: "0.7rem" }}>⚙</span> 관리자
           </Link>
           <Link
             href="/calendar"
-            className="rounded border px-4 py-2.5 text-xs font-semibold transition-colors"
-            style={{ borderColor: "var(--navy)", color: "var(--navy)" }}
+            className="flex items-center gap-1 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all hover:shadow-sm"
+            style={{ background: "var(--cream)", color: "var(--navy)", border: "1px solid var(--gold-light)" }}
           >
-            <span aria-hidden="true">📅</span> 달력
+            <span aria-hidden="true" style={{ fontSize: "0.7rem" }}>📅</span> 달력
           </Link>
           {dateParam && (
-            <span className="text-xs text-gray-500">
-              {dateParam} 주보
+            <span className="rounded-full px-2.5 py-1 text-xs text-gray-400 hidden sm:inline-block" style={{ background: "#f5f5f5" }}>
+              {dateParam}
             </span>
           )}
         </div>
