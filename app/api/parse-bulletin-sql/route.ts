@@ -20,6 +20,7 @@ Extract the following data:
 8. offeringDonors: All offering donor lists (헌금 드리신 분) — both offline and online
 9. missionWorshipReports: 선교회별 예배보고현황 (attendance report by mission group)
 10. fastingPrayer: 가정별 아침 금식 및 중보기도 schedule (fasting and intercessory prayer by family/person)
+11. memberNews: 교우소식 (church member news — births, deaths, weddings, hospitalizations, etc.)
 
 Return this exact JSON structure:
 {
@@ -63,6 +64,10 @@ Return this exact JSON structure:
   "fastingPrayer": [
     {"prayer_date": "YYYY-MM-DD", "day_of_week": "월", "prayer_type": "금식", "order_number": 43, "member_name": "박소영B"},
     {"prayer_date": "YYYY-MM-DD", "day_of_week": "월", "prayer_type": "중보", "order_number": 44, "member_name": "한미영"}
+  ],
+  "memberNews": [
+    {"news_type": "입원", "member_name": "홍길동", "detail": "세브란스병원"},
+    {"news_type": "출산", "member_name": "김철수", "detail": null}
   ]
 }
 
@@ -78,7 +83,8 @@ Important rules:
 - schoolSermons: extract ALL departments (유치부, 유초등부, 중고등부, 청년교회 etc.)
 - offeringDonors: extract ALL offering types. is_online=true for 온라인헌금 section, false for 현장헌금. Copy donor names exactly as written including parentheses. If no donors section found, return empty array
 - missionWorshipReports: extract the "선교회별 예배보고현황" table. CRITICAL: create ONE ROW PER 순 (rotation group), NOT one row per 선교회 (mission group). group_name format must be "N선교회 M순" where M is the EXACT 순 number as printed in the bulletin (순 numbers are continuous across all 선교회 and do NOT restart at 1 for each 선교회 — e.g., if 1선교회 has 순 1~4 and 2선교회 starts at 순 5, use "2선교회 5순" not "2선교회 1순"). Set total_members/part1_count/part2_count to null. total_attendance = the 인원 (attendance count) number shown for that 순 row (null if not shown). notes format: "순장: 이름, 장소: 장소명, 인도: 이름, 성경: 번호" (include all fields present; omit fields not shown). If section not found, return empty array
-- fastingPrayer: extract the "가정별 아침 금식 및 중보기도" section. For each day row, create TWO entries — one with prayer_type="금식" and one with prayer_type="중보". prayer_date must be the actual calendar date in YYYY-MM-DD format (calculate from bulletin context and day of week). order_number is the rotation number (순). If section not found, return empty array`;
+- fastingPrayer: extract the "가정별 아침 금식 및 중보기도" section. For each day row, create TWO entries — one with prayer_type="금식" and one with prayer_type="중보". prayer_date must be the actual calendar date in YYYY-MM-DD format (calculate from bulletin context and day of week). order_number is the rotation number (순). If section not found, return empty array
+- memberNews: extract the "교우소식" section. news_type is the category (e.g., 입원, 퇴원, 수술, 출산, 결혼, 별세, 이사 etc.). member_name is the person's name — if no specific person is named (e.g. organizational or denominational news), use the organization/event name as member_name instead. member_name must NEVER be null. detail is any additional info (hospital name, date, location, etc.) or null. If section not found, return empty array`;
 
 function callAnthropic(apiKey: string, payload: object): Promise<string> {
   return new Promise((resolve, reject) => {

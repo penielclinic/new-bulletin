@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-const PDF_PATH = "C:/Users/penie/Desktop/주보/n_2025년 12월 21일(최종).pdf";
+const PDF_PATH = "C:/Users/penie/Desktop/주보/n_2026년 2월 22일(최종).pdf";
 const API_URL = "http://localhost:3000/api/parse-bulletin-sql";
 const SUPABASE_URL = "https://mjekoveqvrclfaebhuty.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qZWtvdmVxdnJjbGZhZWJodXR5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjA4Mzg3OSwiZXhwIjoyMDg3NjU5ODc5fQ.PHj2WTKwxyZXnU31Rnii2PFW-ZZCieRfGbHVgQXFtQ0";
@@ -52,11 +52,12 @@ async function main() {
   console.log(`  헌금: ${d.offeringDonors?.length}건`);
   console.log(`  선교회보고: ${d.missionWorshipReports?.length}건`);
   console.log(`  금식기도: ${d.fastingPrayer?.length}건`);
+  console.log(`  교우소식: ${d.memberNews?.length}건`);
 
   // 2. 기존 데이터 삭제
   console.log("\n2. 기존 데이터 삭제...");
   for (const table of ["announcements", "worship_committee", "weekly_word", "weekly_schedule",
-    "school_sermons", "offering_donors_raw", "mission_worship_report", "fasting_prayer"]) {
+    "school_sermons", "offering_donors_raw", "mission_worship_report", "fasting_prayer", "member_news"]) {
     await deleteByDate(table, date);
   }
 
@@ -149,6 +150,14 @@ async function main() {
     prayer_type: r.prayer_type,
     order_number: r.order_number,
     member_name: r.member_name,
+  })));
+
+  // 12. 교우소식
+  await upsert("member_news", (d.memberNews ?? []).map(r => ({
+    bulletin_date: date,
+    news_type: r.news_type,
+    member_name: r.member_name,
+    detail: r.detail ?? null,
   })));
 
   console.log("\n✅ 업로드 완료!");
