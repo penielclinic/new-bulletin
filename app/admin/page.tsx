@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BulletinData } from "@/types/bulletin";
 import { loadBulletin, saveBulletin, resetBulletin } from "@/lib/storage";
+import { supabase } from "@/lib/supabase";
 import ServiceInfoEditor from "@/components/admin/ServiceInfoEditor";
 import WorshipOrderEditor from "@/components/admin/WorshipOrderEditor";
 import AnnouncementsEditor from "@/components/admin/AnnouncementsEditor";
@@ -41,6 +42,7 @@ function AdminContent() {
   const [activeTab, setActiveTab] = useState<TabId>("service");
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "ok" | "error">("idle");
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
   const dateParam = searchParams.get("date") ?? undefined;
@@ -48,6 +50,18 @@ function AdminContent() {
   useEffect(() => {
     loadBulletin(dateParam).then(setData);
   }, [dateParam]);
+
+  useEffect(() => {
+    supabase
+      .from("announcements")
+      .select("bulletin_date")
+      .order("bulletin_date", { ascending: false })
+      .then(({ data: rows }) => {
+        if (!rows) return;
+        const unique = [...new Set(rows.map((r) => r.bulletin_date as string))];
+        setAvailableDates(unique);
+      });
+  }, []);
 
   if (!data) {
     return (
@@ -105,6 +119,17 @@ function AdminContent() {
               ← 주보 보기
             </Link>
             <h1 className="text-base font-bold text-gray-900">주보 관리자</h1>
+            {availableDates.length > 0 && (
+              <select
+                value={dateParam ?? availableDates[0]}
+                onChange={(e) => router.push(`/admin?date=${e.target.value}`)}
+                className="rounded border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 focus:outline-none focus:border-amber-400 cursor-pointer"
+              >
+                {availableDates.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            )}
           </div>
           <div className="flex gap-2">
             <button
