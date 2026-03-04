@@ -75,18 +75,18 @@ function generateSql(d: ParsedData): string {
   ];
 
   // STEP 2~3: 예배순서
-  lines.push("-- STEP 2: 예배순서 삭제", "DELETE FROM worship_orders;", "");
+  lines.push("-- STEP 2: 예배순서 삭제", `DELETE FROM worship_orders WHERE bulletin_date = '${bd}';`, "");
   const worshipRows: string[] = [];
   (d.allWorshipOrders ?? []).forEach(({ serviceType, items }) => {
     (items ?? []).forEach((item) => {
       worshipRows.push(
-        `  (${escape(serviceType)}, ${item.order}, ${escape(item.title)}, ${escape(item.detail)}, ${escape(item.note)})`
+        `  ('${bd}', ${escape(serviceType)}, ${item.order}, ${escape(item.title)}, ${escape(item.detail)}, ${escape(item.note)}, ${(item as { standing?: boolean }).standing ? "TRUE" : "FALSE"})`
       );
     });
   });
   if (worshipRows.length > 0) {
     lines.push("-- STEP 3: 예배순서 입력");
-    lines.push("INSERT INTO worship_orders (worship_type, order_number, order_name, detail, leader) VALUES");
+    lines.push("INSERT INTO worship_orders (bulletin_date, worship_type, order_number, order_name, detail, leader, standing) VALUES");
     lines.push(worshipRows.join(",\n") + ";");
   } else {
     lines.push("-- STEP 3: 예배순서 데이터 없음");

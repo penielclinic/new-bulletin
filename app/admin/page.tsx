@@ -187,7 +187,7 @@ function AdminContent() {
               onChange={updateServiceField}
             />
           )}
-          {activeTab === "allworship" && <AllWorshipOrdersEditor />}
+          {activeTab === "allworship" && <AllWorshipOrdersEditor bulletinDate={parseBulletinDate(data.service.date)} />}
           {activeTab === "committee" && (
             <WorshipCommitteeEditor bulletinDate={parseBulletinDate(data.service.date)} />
           )}

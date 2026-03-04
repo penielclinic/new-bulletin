@@ -4,7 +4,11 @@ import { useState, useEffect } from "react";
 import { SERVICE_TYPES, SERVICE_TYPE_LABELS, ServiceType, WorshipItem } from "@/types/bulletin";
 import WorshipOrderEditor from "./WorshipOrderEditor";
 
-export default function AllWorshipOrdersEditor() {
+interface Props {
+  bulletinDate: string;
+}
+
+export default function AllWorshipOrdersEditor({ bulletinDate }: Props) {
   const [activeType, setActiveType] = useState<ServiceType>(SERVICE_TYPES[0]);
   const [allOrders, setAllOrders] = useState<Record<ServiceType, WorshipItem[]>>(
     () =>
@@ -18,20 +22,22 @@ export default function AllWorshipOrdersEditor() {
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
 
   useEffect(() => {
-    fetch("/api/worship-orders")
+    if (!bulletinDate) return;
+    setLoading(true);
+    fetch(`/api/worship-orders?date=${bulletinDate}`)
       .then((r) => r.json())
       .then((data) => {
         setAllOrders((prev) => ({ ...prev, ...data }));
         setLoading(false);
       });
-  }, []);
+  }, [bulletinDate]);
 
   async function handleSave() {
     setSaving(true);
     const res = await fetch("/api/worship-orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(allOrders),
+      body: JSON.stringify({ date: bulletinDate, orders: allOrders }),
     });
     setSaving(false);
     setStatus(res.ok ? "ok" : "error");
@@ -47,10 +53,17 @@ export default function AllWorshipOrdersEditor() {
       ? "bg-green-600"
       : "bg-red-500";
 
+  if (!bulletinDate) return <p className="text-sm text-gray-400 py-4 text-center">날짜를 선택해주세요.</p>;
   if (loading) return <p className="text-sm text-gray-400 py-4 text-center">불러오는 중...</p>;
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold px-2 py-1 rounded" style={{ background: "var(--cream)", color: "var(--navy)", border: "1px solid var(--gold-light)" }}>
+          {bulletinDate} 예배순서
+        </span>
+      </div>
+
       {/* 서브탭 */}
       <div className="flex gap-1 border-b border-gray-200">
         {SERVICE_TYPES.map((t) => (
@@ -68,14 +81,12 @@ export default function AllWorshipOrdersEditor() {
         ))}
       </div>
 
-      {/* 편집기 */}
       <p className="text-xs text-gray-400">▲▼ 순서 변경, ✕ 삭제 가능</p>
       <WorshipOrderEditor
         items={allOrders[activeType]}
         onChange={(items) => setAllOrders((prev) => ({ ...prev, [activeType]: items }))}
       />
 
-      {/* 저장 버튼 */}
       <div className="flex justify-end pt-2">
         <button
           onClick={handleSave}
