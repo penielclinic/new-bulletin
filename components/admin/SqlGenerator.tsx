@@ -8,20 +8,20 @@ function escape(v: string | null | undefined): string {
   return `'${v.replace(/'/g, "''")}'`;
 }
 
-function genWorshipOrdersSql(allOrders: Record<ServiceType, WorshipItem[]>): string {
+function genWorshipOrdersSql(bulletinDate: string, allOrders: Record<ServiceType, WorshipItem[]>): string {
   const rows: string[] = [];
   SERVICE_TYPES.forEach((t) => {
     (allOrders[t] ?? []).forEach((item) => {
       rows.push(
-        `  (${escape(t)}, ${item.order}, ${escape(item.title)}, ${escape(item.detail ?? null)}, ${escape(item.note ?? null)})`
+        `  ('${bulletinDate}', ${escape(t)}, ${item.order}, ${escape(item.title)}, ${escape(item.detail ?? null)}, ${escape(item.note ?? null)}, ${item.standing ? "TRUE" : "FALSE"})`
       );
     });
   });
 
-  const lines = ["-- STEP 2: 예배순서 삭제", "DELETE FROM worship_orders;", ""];
+  const lines = [`-- STEP 2: 예배순서 삭제 (${bulletinDate})`, `DELETE FROM worship_orders WHERE bulletin_date = '${bulletinDate}';`, ""];
   if (rows.length > 0) {
     lines.push("-- STEP 3: 예배순서 입력");
-    lines.push("INSERT INTO worship_orders (worship_type, order_number, order_name, detail, leader) VALUES");
+    lines.push("INSERT INTO worship_orders (bulletin_date, worship_type, order_number, order_name, detail, leader, standing) VALUES");
     lines.push(rows.join(",\n") + ";");
   } else {
     lines.push("-- STEP 3: 입력할 예배순서 데이터 없음");
@@ -88,7 +88,7 @@ export default function SqlGenerator({ bulletinDate }: Props) {
 
   if (loading) return <p className="text-sm text-gray-400 py-4 text-center">불러오는 중...</p>;
 
-  const ordersSql = genWorshipOrdersSql(allOrders);
+  const ordersSql = genWorshipOrdersSql(bulletinDate, allOrders);
   const committeeSql = genCommitteeSql(bulletinDate, committee);
 
   return (
